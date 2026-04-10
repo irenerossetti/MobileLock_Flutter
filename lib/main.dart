@@ -1,7 +1,17 @@
 import 'package:flutter/material.dart';
-import 'services/api_service.dart'; // Tu conexión con Dio
+import 'src/pages/Welcome/welcome_page.dart';
+import 'src/pages/Login/login_page.dart';
+import 'src/pages/Register/register_page.dart' as user;
+import 'src/pages/Dashboard/dashboard_page.dart';
+import 'src/pages/Profile/profile_page.dart';
+import 'src/pages/Profile/edit_profile_page.dart';
+import 'src/pages/Profile/change_password_page.dart';
+import 'src/pages/Device/devices_page.dart';
+import 'src/pages/Device/register_device_page.dart' as device;
 
-void main() => runApp(const MyApp());
+void main() {
+  runApp(const MyApp());
+}
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
@@ -9,71 +19,36 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      debugShowCheckedModeBanner: false,
       title: 'MobileLock AI',
-      theme: ThemeData(primarySwatch: Colors.blue),
-      home: const TestConnectionPage(),
-    );
-  }
-}
+      debugShowCheckedModeBanner: false,
 
-class TestConnectionPage extends StatefulWidget {
-  const TestConnectionPage({super.key});
-
-  @override
-  State<TestConnectionPage> createState() => _TestConnectionPageState();
-}
-
-class _TestConnectionPageState extends State<TestConnectionPage> {
-  String _status = "Esperando para conectar...";
-  Color _color = Colors.orange;
-  final ApiService _api = ApiService(); 
-
-  Future<void> _checkBackend() async {
-    setState(() => _status = "Llamando a Django...");
-    try {
-      // Intentamos un GET a la raíz del backend
-      final response = await _api.dio.get('/'); 
-      if (response.statusCode == 200) {
-        setState(() {
-          _status = "¡Conexión Exitosa con MobileLock AI!";
-          _color = Colors.green;
-        });
-      }
-    } catch (e) {
-      setState(() {
-        _status = "Error: El Backend no responde (¿Está encendido?)";
-        _color = Colors.red;
-      });
-    }
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(title: const Text("MobileLock AI - T006")),
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Container(
-              padding: const EdgeInsets.all(20),
-              decoration: BoxDecoration(
-                color: _color,
-                borderRadius: BorderRadius.circular(10),
-              ),
-              child: Text(_status, style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
-            ),
-            const SizedBox(height: 30),
-            ElevatedButton.icon(
-              onPressed: _checkBackend,
-              icon: const Icon(Icons.sync),
-              label: const Text("Probar Conexión con Django"),
-              style: ElevatedButton.styleFrom(padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12)),
-            ),
-          ],
+      // Aplicamos un tema oscuro global para que combine con tu interfaz
+      theme: ThemeData(
+        brightness: Brightness.dark,
+        colorScheme: ColorScheme.dark(
+          primary: const Color(
+            0xFF00FFA3,
+          ), // Esto aplica el verde a más componentes
+          surface: const Color(0xFF14191A),
         ),
+        scaffoldBackgroundColor: const Color(0xFF0A0E0F),
       ),
+
+      // 1. La pantalla que se verá apenas abra la app
+      initialRoute: '/',
+
+      // 2. El "Mapa" de navegación hacia tus nuevas carpetas
+      routes: {
+        '/': (context) => const WelcomePage(),
+        '/login': (context) => const LoginPage(),
+        '/register': (context) => const user.RegisterPage(),
+        '/dashboard': (context) => const DashboardPage(),
+        '/profile': (context) => const ProfilePage(),
+        '/edit_profile': (context) => const EditProfilePage(),
+        '/change_password': (context) => const ChangePasswordPage(),
+        '/devices': (context) => const DevicesPage(),
+        '/register_device': (context) => device.RegisterDevicePage(),
+      },
     );
   }
 }
